@@ -24,9 +24,9 @@ Always learning, always shipping.`,
 
   // --- CONTACT & SOCIAL ---
   contact: {
-    email: "ajinkya@example.com",         // ← your email
-    phone: "+91 00000 00000",              // ← your phone
-    instagram: "@ajinkya.kamble",          // ← your Instagram handle
+    email: "ajinkya.kamble016@gmail.com",         // ← your email
+    phone: "+91 74004 88829",              // ← your phone
+    instagram: "@ajinkya78910",          // ← your Instagram handle
     github: "ajinkya-kamble",             // ← your GitHub username
     linkedin: "ajinkya-kamble",           // ← your LinkedIn username
     twitter: "@ajinkya_dev",              // ← your Twitter/X handle
@@ -37,8 +37,8 @@ Always learning, always shipping.`,
   skills: [
     { name: "HTML / CSS", level: 85 },
     { name: "JavaScript", level: 75 },
-    { name: "Python", level: 70 },
-    { name: "React", level: 60 },
+    { name: "php", level: 70 },
+    { name: "MySQL", level: 60 },
     { name: "Node.js", level: 55 },
     { name: "Git & GitHub", level: 80 },
   ],
