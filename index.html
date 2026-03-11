@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ajinkya Kamble — Developer & Creator</title>
+  <script src="config.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Syne', 'sans-serif'],
+            body: ['DM Sans', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --accent: #f97316;
+      --accent-dark: #ea580c;
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --surface-hover: #1a1a1a;
+      --text: #f5f5f5;
+      --muted: #888888;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      cursor: none;
+      overflow-x: hidden;
+    }
+
+    /* Custom cursor */
+    .cursor {
+      width: 10px; height: 10px;
+      background: var(--accent);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s ease, width 0.2s, height 0.2s, background 0.2s;
+    }
+    .cursor-ring {
+      width: 36px; height: 36px;
+      border: 1.5px solid rgba(249,115,22,0.4);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.15s ease, width 0.2s, height 0.2s;
+    }
+    body:hover .cursor { opacity: 1; }
+
+    /* Grain overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 100;
+      opacity: 0.4;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+
+    /* Nav */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 50;
+      padding: 1.25rem 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(10,10,10,0.8);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      transition: all 0.3s ease;
+    }
+
+    /* Logo SVG */
+    .logo-mark {
+      width: 42px; height: 42px;
+      flex-shrink: 0;
+    }
+
+    /* Section fade-in */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Hero text */
+    .hero-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+
+    /* Highlight */
+    .accent { color: var(--accent); }
+
+    /* Orange underline decoration */
+    .underline-accent {
+      position: relative;
+      display: inline-block;
+    }
+    .underline-accent::after {
+      content: '';
+      position: absolute;
+      left: 0; bottom: -4px;
+      width: 100%; height: 3px;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      transition: transform 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(249,115,22,0.25);
+      background: var(--surface-hover);
+    }
+
+    /* Skill bar */
+    .skill-bar-track {
+      background: rgba(255,255,255,0.06);
+      border-radius: 100px;
+      height: 6px;
+      overflow: hidden;
+    }
+    .skill-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), #fb923c);
+      border-radius: 100px;
+      width: 0%;
+      transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Tag pill */
+    .tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      background: rgba(249,115,22,0.1);
+      color: var(--accent);
+      border: 1px solid rgba(249,115,22,0.2);
+      border-radius: 100px;
+      padding: 2px 10px;
+      letter-spacing: 0.02em;
+    }
+
+    /* Nav link */
+    .nav-link {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      transition: color 0.2s;
+      text-decoration: none;
+    }
+    .nav-link:hover { color: var(--text); }
+
+    /* CTA Button */
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--accent);
+      color: #fff;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.04em;
+      padding: 12px 28px;
+      border-radius: 100px;
+      border: none;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s;
+      cursor: none;
+    }
+    .btn-primary:hover {
+      background: var(--accent-dark);
+      transform: scale(1.04);
+    }
+
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: transparent;
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.04em;
+      padding: 11px 28px;
+      border-radius: 100px;
+      border: 1px solid rgba(255,255,255,0.15);
+      text-decoration: none;
+      transition: border-color 0.2s, background 0.2s, transform 0.2s;
+      cursor: none;
+    }
+    .btn-ghost:hover {
+      border-color: var(--accent);
+      background: rgba(249,115,22,0.07);
+      transform: scale(1.04);
+    }
+
+    /* Section title */
+    .section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--accent);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    /* Social icon */
+    .social-link {
+      display: flex; align-items: center; justify-content: center;
+      width: 42px; height: 42px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      transition: background 0.2s, border-color 0.2s, transform 0.2s;
+      color: var(--muted);
+      text-decoration: none;
+    }
+    .social-link:hover {
+      background: rgba(249,115,22,0.12);
+      border-color: rgba(249,115,22,0.3);
+      color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    /* Hero grid decoration */
+    .grid-bg {
+      background-image:
+        linear-gradient(rgba(249,115,22,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(249,115,22,0.04) 1px, transparent 1px);
+      background-size: 44px 44px;
+    }
+
+    /* Glow blob */
+    .glow {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+    }
+
+    /* Achievement dot */
+    .achieve-dot::before {
+      content: '→';
+      color: var(--accent);
+      margin-right: 10px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Mobile menu */
+    #mobile-menu {
+      display: none;
+      flex-direction: column;
+      gap: 1.5rem;
+      padding: 1.5rem 2rem 2rem;
+      background: rgba(10,10,10,0.97);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    #mobile-menu.open { display: flex; }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hero-name { font-size: clamp(3rem, 12vw, 7rem); }
+    }
+
+    /* Contact item */
+    .contact-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 18px;
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      text-decoration: none;
+      color: var(--text);
+      transition: border-color 0.2s, background 0.2s, transform 0.2s;
+    }
+    .contact-item:hover {
+      border-color: rgba(249,115,22,0.3);
+      background: var(--surface-hover);
+      transform: translateX(4px);
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Custom Cursor -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <a href="#home" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
+      <!-- Logo Mark: AK monogram -->
+      <svg class="logo-mark" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="42" height="42" rx="10" fill="#f97316"/>
+        <text x="50%" y="50%" dominant-baseline="central" text-anchor="middle"
+          font-family="Syne, sans-serif" font-weight="800" font-size="16" fill="white"
+          letter-spacing="-1">AK</text>
+      </svg>
+      <span style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.95rem;color:#f5f5f5;">
+        Ajinkya<span style="color:#f97316;">.</span>
+      </span>
+    </a>
+
+    <div class="nav-links" style="display:flex;gap:2rem;align-items:center;">
+      <a href="#about" class="nav-link">About</a>
+      <a href="#projects" class="nav-link">Projects</a>
+      <a href="#skills" class="nav-link">Skills</a>
+      <a href="#contact" class="nav-link">Contact</a>
+      <a href="#contact" class="btn-primary" style="font-size:0.78rem;padding:9px 20px;">
+        Let's Talk
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+
+    <!-- Hamburger -->
+    <button id="hamburger" style="display:none;background:none;border:none;cursor:none;padding:6px;" onclick="toggleMenu()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f5f5f5" stroke-width="2">
+        <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div id="mobile-menu">
+    <a href="#about" class="nav-link" onclick="toggleMenu()">About</a>
+    <a href="#projects" class="nav-link" onclick="toggleMenu()">Projects</a>
+    <a href="#skills" class="nav-link" onclick="toggleMenu()">Skills</a>
+    <a href="#contact" class="nav-link" onclick="toggleMenu()">Contact</a>
+  </div>
+
+  <!-- ===== HERO ===== -->
+  <section id="home" class="grid-bg" style="min-height:100vh;display:flex;align-items:center;position:relative;overflow:hidden;padding-top:80px;">
+    <!-- Glow blobs -->
+    <div class="glow" style="width:500px;height:500px;background:rgba(249,115,22,0.12);top:-100px;right:-100px;"></div>
+    <div class="glow" style="width:300px;height:300px;background:rgba(249,115,22,0.06);bottom:0;left:-50px;"></div>
+
+    <div style="max-width:1100px;margin:0 auto;padding:4rem 2rem;width:100%;">
+      <div style="display:flex;flex-direction:column;gap:1.5rem;">
+
+        <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.2);border-radius:100px;padding:6px 14px;width:fit-content;" class="reveal">
+          <span style="width:7px;height:7px;background:#4ade80;border-radius:50%;animation:pulse 2s infinite;"></span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:#f97316;letter-spacing:0.1em;">AVAILABLE FOR PROJECTS</span>
+        </div>
+
+        <div class="reveal" style="transition-delay:0.1s;">
+          <p style="font-family:'DM Sans',sans-serif;font-size:1.1rem;color:#888;font-weight:300;margin-bottom:0.5rem;">
+            Hi, I'm
+          </p>
+          <h1 class="hero-name" id="hero-name" style="font-size:clamp(3.5rem,10vw,8rem);color:#f5f5f5;"></h1>
+        </div>
+
+        <p class="reveal" id="hero-tagline" style="font-size:1.1rem;color:#888;max-width:520px;line-height:1.7;transition-delay:0.2s;"></p>
+
+        <div class="reveal" style="display:flex;gap:12px;flex-wrap:wrap;transition-delay:0.3s;">
+          <a href="#projects" class="btn-primary">
+            View my work
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+          <a href="#contact" class="btn-ghost">Get in touch</a>
+        </div>
+
+        <!-- Quick stats -->
+        <div class="reveal" style="display:flex;gap:2.5rem;margin-top:1rem;flex-wrap:wrap;transition-delay:0.4s;">
+          <div>
+            <div style="font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;color:#f5f5f5;" id="stat-projects">3+</div>
+            <div style="font-size:0.78rem;color:#888;font-family:'JetBrains Mono',monospace;letter-spacing:0.08em;">PROJECTS</div>
+          </div>
+          <div style="width:1px;background:rgba(255,255,255,0.08);"></div>
+          <div>
+            <div style="font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;color:#f5f5f5;">17</div>
+            <div style="font-size:0.78rem;color:#888;font-family:'JetBrains Mono',monospace;letter-spacing:0.08em;">YEARS OLD</div>
+          </div>
+          <div style="width:1px;background:rgba(255,255,255,0.08);"></div>
+          <div>
+            <div style="font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;color:#f5f5f5;">∞</div>
+            <div style="font-size:0.78rem;color:#888;font-family:'JetBrains Mono',monospace;letter-spacing:0.08em;">CURIOSITY</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scroll hint -->
+    <div style="position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;opacity:0.4;">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;letter-spacing:0.1em;color:#888;">SCROLL</span>
+      <div style="width:1px;height:40px;background:linear-gradient(to bottom,#888,transparent);"></div>
+    </div>
+  </section>
+
+  <!-- ===== ABOUT ===== -->
+  <section id="about" style="padding:6rem 2rem;max-width:1100px;margin:0 auto;">
+    <div class="reveal" style="display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;">
+
+      <!-- Text -->
+      <div style="display:flex;flex-direction:column;gap:1.5rem;">
+        <div>
+          <p class="section-label">01 — About me</p>
+          <h2 class="section-title" style="font-size:clamp(2rem,4vw,3rem);margin-top:0.5rem;color:#f5f5f5;">
+            Building the web,<br/><span class="accent">one line at a time.</span>
+          </h2>
+        </div>
+
+        <p id="about-bio" style="color:#aaa;line-height:1.8;font-size:0.95rem;"></p>
+
+        <div style="display:flex;align-items:center;gap:8px;color:#888;font-size:0.88rem;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span id="about-location" style="font-family:'JetBrains Mono',monospace;font-size:0.8rem;"></span>
+        </div>
+
+        <!-- Achievements -->
+        <ul id="achievements-list" style="display:flex;flex-direction:column;gap:10px;list-style:none;"></ul>
+      </div>
+
+      <!-- Visual card -->
+      <div style="display:flex;justify-content:center;">
+        <div style="position:relative;width:280px;height:320px;">
+          <!-- Main card -->
+          <div style="background:linear-gradient(135deg,#1a1a1a,#111);border:1px solid rgba(249,115,22,0.2);border-radius:24px;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:2rem;position:relative;overflow:hidden;">
+            <!-- Big initials -->
+            <div style="font-family:'Syne',sans-serif;font-size:5rem;font-weight:800;color:rgba(249,115,22,0.15);position:absolute;top:10px;right:20px;line-height:1;">AK</div>
+            <!-- Avatar placeholder -->
+            <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#f97316,#ea580c);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:1.8rem;color:white;z-index:1;">A</div>
+            <div style="text-align:center;z-index:1;">
+              <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;color:#f5f5f5;">Ajinkya Kamble</div>
+              <div style="font-size:0.78rem;color:#888;margin-top:4px;font-family:'JetBrains Mono',monospace;">Developer · Creator</div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;z-index:1;">
+              <span class="tag">India 🇮🇳</span>
+              <span class="tag">17 y/o</span>
+              <span class="tag">Open Source</span>
+            </div>
+          </div>
+          <!-- Decorative floating card -->
+          <div style="position:absolute;bottom:-20px;right:-20px;background:#1a1a1a;border:1px solid rgba(249,115,22,0.15);border-radius:14px;padding:12px 16px;display:flex;align-items:center;gap:8px;">
+            <div style="width:8px;height:8px;background:#4ade80;border-radius:50%;"></div>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:#aaa;">Currently learning</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PROJECTS ===== -->
+  <section id="projects" style="padding:6rem 2rem;background:rgba(255,255,255,0.015);border-top:1px solid rgba(255,255,255,0.04);border-bottom:1px solid rgba(255,255,255,0.04);">
+    <div style="max-width:1100px;margin:0 auto;">
+      <div class="reveal" style="margin-bottom:3rem;">
+        <p class="section-label">02 — Projects</p>
+        <h2 class="section-title" style="font-size:clamp(2rem,4vw,3rem);margin-top:0.5rem;color:#f5f5f5;">
+          Things I've <span class="accent">built</span>
+        </h2>
+      </div>
+
+      <div id="projects-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem;"></div>
+    </div>
+  </section>
+
+  <!-- ===== SKILLS ===== -->
+  <section id="skills" style="padding:6rem 2rem;max-width:1100px;margin:0 auto;">
+    <div class="reveal" style="margin-bottom:3rem;">
+      <p class="section-label">03 — Skills</p>
+      <h2 class="section-title" style="font-size:clamp(2rem,4vw,3rem);margin-top:0.5rem;color:#f5f5f5;">
+        My <span class="accent">toolbox</span>
+      </h2>
+    </div>
+
+    <div id="skills-list" style="display:flex;flex-direction:column;gap:1.5rem;max-width:600px;"></div>
+  </section>
+
+  <!-- ===== CONTACT ===== -->
+  <section id="contact" style="padding:6rem 2rem;background:rgba(255,255,255,0.015);border-top:1px solid rgba(255,255,255,0.04);">
+    <div style="max-width:1100px;margin:0 auto;">
+      <div class="reveal" style="margin-bottom:3rem;">
+        <p class="section-label">04 — Contact</p>
+        <h2 class="section-title" style="font-size:clamp(2rem,4vw,3rem);margin-top:0.5rem;color:#f5f5f5;">
+          Let's <span class="accent">connect</span>
+        </h2>
+        <p style="color:#888;margin-top:1rem;font-size:0.95rem;max-width:480px;">
+          Whether you have a project in mind, want to collaborate, or just want to say hi — my inbox is always open.
+        </p>
+      </div>
+
+      <div id="contact-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;max-width:700px;"></div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer style="padding:2rem;text-align:center;">
+    <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:0.5rem;">
+      <svg width="18" height="18" viewBox="0 0 42 42" fill="none">
+        <rect width="42" height="42" rx="8" fill="#f97316"/>
+        <text x="50%" y="50%" dominant-baseline="central" text-anchor="middle"
+          font-family="Syne,sans-serif" font-weight="800" font-size="14" fill="white">AK</text>
+      </svg>
+      <span style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.9rem;color:#f5f5f5;">Ajinkya Kamble</span>
+    </div>
+    <p style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:#555;letter-spacing:0.05em;">
+      BUILT WITH HTML · TAILWIND CSS · PURE JS · <span style="color:#f97316;">♥</span>
+    </p>
+  </footer>
+
+  <style>
+    @keyframes pulse {
+      0%,100%{opacity:1}50%{opacity:0.4}
+    }
+    @media(max-width:768px){
+      #hamburger{display:block!important;}
+      section > div[style*="grid-template-columns:1fr 1fr"]{
+        grid-template-columns:1fr!important;
+      }
+    }
+  </style>
+
+  <script>
+    // ── Apply CONFIG ──────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', () => {
+      applyTheme();
+      populatePage();
+      initCursor();
+      initReveal();
+      initNavScroll();
+      initSkillBars();
+    });
+
+    function applyTheme() {
+      const t = CONFIG.theme;
+      document.documentElement.style.setProperty('--accent', t.accent);
+      document.documentElement.style.setProperty('--accent-dark', t.accentDark);
+      document.documentElement.style.setProperty('--bg', t.bg);
+      document.documentElement.style.setProperty('--surface', t.surface);
+      document.documentElement.style.setProperty('--surface-hover', t.surfaceHover);
+      document.documentElement.style.setProperty('--text', t.textPrimary);
+      document.documentElement.style.setProperty('--muted', t.textMuted);
+      document.body.style.backgroundColor = t.bg;
+      document.body.style.color = t.textPrimary;
+    }
+
+    function populatePage() {
+      const c = CONFIG;
+
+      // Title
+      document.title = `${c.name.full} — Developer & Creator`;
+
+      // Hero
+      const nameEl = document.getElementById('hero-name');
+      if (nameEl) {
+        nameEl.innerHTML = `<span style="color:#f5f5f5">${c.name.first}</span> <span style="color:#f97316">${c.name.last}</span>`;
+      }
+      const tagEl = document.getElementById('hero-tagline');
+      if (tagEl) tagEl.textContent = c.tagline;
+
+      // Stat
+      const sp = document.getElementById('stat-projects');
+      if (sp) sp.textContent = `${c.projects.length}+`;
+
+      // About
+      const bioEl = document.getElementById('about-bio');
+      if (bioEl) bioEl.textContent = c.bio;
+      const locEl = document.getElementById('about-location');
+      if (locEl) locEl.textContent = c.location;
+
+      // Achievements
+      const achList = document.getElementById('achievements-list');
+      if (achList) {
+        c.achievements.forEach(a => {
+          const li = document.createElement('li');
+          li.className = 'achieve-dot';
+          li.style.cssText = 'color:#aaa;font-size:0.88rem;display:flex;align-items:flex-start;';
+          li.textContent = a;
+          achList.appendChild(li);
+        });
+      }
+
+      // Projects
+      const pg = document.getElementById('projects-grid');
+      if (pg) {
+        c.projects.forEach((p, i) => {
+          const card = document.createElement('div');
+          card.className = 'card reveal';
+          card.style.cssText = `padding:1.75rem;display:flex;flex-direction:column;gap:1rem;transition-delay:${i*0.1}s`;
+          card.innerHTML = `
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;">
+              <div style="width:40px;height:40px;background:rgba(249,115,22,0.1);border:1px solid rgba(249,115,22,0.2);border-radius:10px;display:flex;align-items:center;justify-content:center;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+              </div>
+              <div style="display:flex;gap:8px;">
+                ${p.demo ? `<a href="${p.demo}" target="_blank" style="display:flex;align-items:center;gap:4px;font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:#888;text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='#f97316'" onmouseout="this.style.color='#888'">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> Demo
+                </a>` : ''}
+                <a href="${p.link}" target="_blank" style="display:flex;align-items:center;gap:4px;font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:#888;text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='#f97316'" onmouseout="this.style.color='#888'">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg> Code
+                </a>
+              </div>
+            </div>
+            <div>
+              <h3 style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;color:#f5f5f5;">${p.title}</h3>
+              <p style="color:#888;font-size:0.85rem;line-height:1.6;margin-top:6px;">${p.description}</p>
+            </div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:auto;">
+              ${p.tags.map(t => `<span class="tag">${t}</span>`).join('')}
+            </div>
+          `;
+          pg.appendChild(card);
+        });
+      }
+
+      // Skills
+      const sl = document.getElementById('skills-list');
+      if (sl) {
+        c.skills.forEach((s, i) => {
+          const row = document.createElement('div');
+          row.className = 'reveal';
+          row.style.cssText = `transition-delay:${i*0.08}s`;
+          row.innerHTML = `
+            <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+              <span style="font-family:'DM Sans',sans-serif;font-size:0.9rem;color:#e5e5e5;">${s.name}</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:#f97316;">${s.level}%</span>
+            </div>
+            <div class="skill-bar-track">
+              <div class="skill-bar-fill" data-width="${s.level}"></div>
+            </div>
+          `;
+          sl.appendChild(row);
+        });
+      }
+
+      // Contact
+      const cg = document.getElementById('contact-grid');
+      if (cg) {
+        const links = [
+          { icon: emailIcon(), label: 'Email', value: c.contact.email, href: `mailto:${c.contact.email}` },
+          { icon: phoneIcon(), label: 'Phone', value: c.contact.phone, href: `tel:${c.contact.phone}` },
+          { icon: githubIcon(), label: 'GitHub', value: `@${c.contact.github}`, href: `https://github.com/${c.contact.github}` },
+          { icon: instaIcon(), label: 'Instagram', value: c.contact.instagram, href: `https://instagram.com/${c.contact.instagram.replace('@','')}` },
+          { icon: linkedinIcon(), label: 'LinkedIn', value: c.contact.linkedin, href: `https://linkedin.com/in/${c.contact.linkedin}` },
+          { icon: twitterIcon(), label: 'Twitter / X', value: c.contact.twitter, href: `https://twitter.com/${c.contact.twitter.replace('@','')}` },
+        ].filter(l => l.value && l.value !== '' && !l.value.includes('example'));
+
+        links.forEach(l => {
+          const a = document.createElement('a');
+          a.href = l.href;
+          a.target = '_blank';
+          a.className = 'contact-item reveal';
+          a.innerHTML = `
+            <div style="width:36px;height:36px;background:rgba(249,115,22,0.1);border:1px solid rgba(249,115,22,0.2);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${l.icon}</div>
+            <div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:#888;letter-spacing:0.08em;text-transform:uppercase;">${l.label}</div>
+              <div style="font-size:0.85rem;color:#e5e5e5;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;">${l.value}</div>
+            </div>
+          `;
+          cg.appendChild(a);
+        });
+      }
+    }
+
+    // SVG icons
+    function emailIcon() { return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>`; }
+    function phoneIcon() { return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 11.5a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .84h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>`; }
+    function githubIcon() { return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>`; }
+    function instaIcon() { return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>`; }
+    function linkedinIcon() { return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>`; }
+    function twitterIcon() { return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2"><path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/></svg>`; }
+
+    // ── Cursor ─────────────────────────────────────────────
+    function initCursor() {
+      const cur = document.getElementById('cursor');
+      const ring = document.getElementById('cursorRing');
+      let mx = 0, my = 0, rx = 0, ry = 0;
+      document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cur.style.left = mx+'px'; cur.style.top = my+'px'; });
+      function animRing() {
+        rx += (mx - rx) * 0.14;
+        ry += (my - ry) * 0.14;
+        ring.style.left = rx + 'px';
+        ring.style.top = ry + 'px';
+        requestAnimationFrame(animRing);
+      }
+      animRing();
+      document.querySelectorAll('a,button,.card').forEach(el => {
+        el.addEventListener('mouseenter', () => { cur.style.transform = 'translate(-50%,-50%) scale(2.5)'; ring.style.transform = 'translate(-50%,-50%) scale(0.5)'; });
+        el.addEventListener('mouseleave', () => { cur.style.transform = 'translate(-50%,-50%) scale(1)'; ring.style.transform = 'translate(-50%,-50%) scale(1)'; });
+      });
+    }
+
+    // ── Scroll reveal ──────────────────────────────────────
+    function initReveal() {
+      const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+      }, { threshold: 0.1 });
+      document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+    }
+
+    // ── Skill bars ─────────────────────────────────────────
+    function initSkillBars() {
+      const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            const fills = e.target.querySelectorAll('.skill-bar-fill');
+            fills.forEach(f => { f.style.width = f.dataset.width + '%'; });
+          }
+        });
+      }, { threshold: 0.3 });
+      document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+    }
+
+    // ── Nav scroll effect ──────────────────────────────────
+    function initNavScroll() {
+      const nav = document.getElementById('navbar');
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 40) {
+          nav.style.padding = '0.85rem 2rem';
+          nav.style.borderBottomColor = 'rgba(255,255,255,0.08)';
+        } else {
+          nav.style.padding = '1.25rem 2rem';
+          nav.style.borderBottomColor = 'rgba(255,255,255,0.05)';
+        }
+      });
+    }
+
+    function toggleMenu() {
+      document.getElementById('mobile-menu').classList.toggle('open');
+    }
+  </script>
+</body>
+</html>
