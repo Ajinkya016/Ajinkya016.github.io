@@ -7,7 +7,7 @@ const CONFIG = {
 
   // --- BASIC INFO ---
   name: {
-    first: "Ajinkyaaaaaaa",
+    first: "Ajinkya",
     last: "Kamble",
     full: "Ajinkya Kamble",
     nickname: "AK", // used in logo
